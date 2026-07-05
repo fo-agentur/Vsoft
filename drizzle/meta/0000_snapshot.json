@@ -1,0 +1,1085 @@
+{
+  "id": "8bf7472e-1aa6-434f-8a55-fb750f8212f7",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.catalog_items": {
+      "name": "catalog_items",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "catalog_item_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manufacturer": {
+          "name": "manufacturer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "series": {
+          "name": "series",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sku": {
+          "name": "sku",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "color_name": {
+          "name": "color_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "texture_url": {
+          "name": "texture_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thumbnail_url": {
+          "name": "thumbnail_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_url": {
+          "name": "model_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_cents": {
+          "name": "price_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price_unit": {
+          "name": "price_unit",
+          "type": "price_unit",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "catalog_items_owner_id_idx": {
+          "name": "catalog_items_owner_id_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "catalog_items_type_idx": {
+          "name": "catalog_items_type_idx",
+          "columns": [
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "catalog_items_owner_id_users_id_fk": {
+          "name": "catalog_items_owner_id_users_id_fk",
+          "tableFrom": "catalog_items",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "catalog_items_owner_all": {
+          "name": "catalog_items_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "\"catalog_items\".\"owner_id\" = (select auth.uid())",
+          "withCheck": "\"catalog_items\".\"owner_id\" = (select auth.uid())"
+        }
+      },
+      "checkConstraints": {
+        "catalog_items_price_non_negative": {
+          "name": "catalog_items_price_non_negative",
+          "value": "\"catalog_items\".\"price_cents\" is null or \"catalog_items\".\"price_cents\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.customers": {
+      "name": "customers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "customers_owner_id_idx": {
+          "name": "customers_owner_id_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "customers_owner_id_users_id_fk": {
+          "name": "customers_owner_id_users_id_fk",
+          "tableFrom": "customers",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "customers_owner_all": {
+          "name": "customers_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "\"customers\".\"owner_id\" = (select auth.uid())",
+          "withCheck": "\"customers\".\"owner_id\" = (select auth.uid())"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.openings": {
+      "name": "openings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "wall_id": {
+          "name": "wall_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "opening_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "offset_mm": {
+          "name": "offset_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "width_mm": {
+          "name": "width_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height_mm": {
+          "name": "height_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bottom_mm": {
+          "name": "bottom_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "openings_wall_id_idx": {
+          "name": "openings_wall_id_idx",
+          "columns": [
+            {
+              "expression": "wall_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "openings_wall_id_walls_id_fk": {
+          "name": "openings_wall_id_walls_id_fk",
+          "tableFrom": "openings",
+          "tableTo": "walls",
+          "columnsFrom": [
+            "wall_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "openings_owner_all": {
+          "name": "openings_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "exists (select 1 from \"walls\" join \"rooms\" on \"rooms\".\"id\" = \"walls\".\"room_id\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"walls\".\"id\" = \"openings\".\"wall_id\" and \"projects\".\"owner_id\" = (select auth.uid()))",
+          "withCheck": "exists (select 1 from \"walls\" join \"rooms\" on \"rooms\".\"id\" = \"walls\".\"room_id\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"walls\".\"id\" = \"openings\".\"wall_id\" and \"projects\".\"owner_id\" = (select auth.uid()))"
+        }
+      },
+      "checkConstraints": {
+        "openings_offset_non_negative": {
+          "name": "openings_offset_non_negative",
+          "value": "\"openings\".\"offset_mm\" >= 0"
+        },
+        "openings_size_positive": {
+          "name": "openings_size_positive",
+          "value": "\"openings\".\"width_mm\" > 0 and \"openings\".\"height_mm\" > 0"
+        },
+        "openings_bottom_non_negative": {
+          "name": "openings_bottom_non_negative",
+          "value": "\"openings\".\"bottom_mm\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.placements": {
+      "name": "placements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "room_id": {
+          "name": "room_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "catalog_item_id": {
+          "name": "catalog_item_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "surface": {
+          "name": "surface",
+          "type": "surface_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wall_id": {
+          "name": "wall_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pattern": {
+          "name": "pattern",
+          "type": "tile_pattern",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pattern_offset_fraction": {
+          "name": "pattern_offset_fraction",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grout_width_mm": {
+          "name": "grout_width_mm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grout_color": {
+          "name": "grout_color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rotation_deg": {
+          "name": "rotation_deg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "placements_room_id_idx": {
+          "name": "placements_room_id_idx",
+          "columns": [
+            {
+              "expression": "room_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "placements_catalog_item_id_idx": {
+          "name": "placements_catalog_item_id_idx",
+          "columns": [
+            {
+              "expression": "catalog_item_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "placements_wall_id_idx": {
+          "name": "placements_wall_id_idx",
+          "columns": [
+            {
+              "expression": "wall_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "placements_room_id_rooms_id_fk": {
+          "name": "placements_room_id_rooms_id_fk",
+          "tableFrom": "placements",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "room_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "placements_catalog_item_id_catalog_items_id_fk": {
+          "name": "placements_catalog_item_id_catalog_items_id_fk",
+          "tableFrom": "placements",
+          "tableTo": "catalog_items",
+          "columnsFrom": [
+            "catalog_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "placements_wall_id_walls_id_fk": {
+          "name": "placements_wall_id_walls_id_fk",
+          "tableFrom": "placements",
+          "tableTo": "walls",
+          "columnsFrom": [
+            "wall_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "placements_owner_all": {
+          "name": "placements_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "exists (select 1 from \"rooms\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"rooms\".\"id\" = \"placements\".\"room_id\" and \"projects\".\"owner_id\" = (select auth.uid()))",
+          "withCheck": "exists (select 1 from \"rooms\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"rooms\".\"id\" = \"placements\".\"room_id\" and \"projects\".\"owner_id\" = (select auth.uid()))"
+        }
+      },
+      "checkConstraints": {
+        "placements_wall_surface_requires_wall_id": {
+          "name": "placements_wall_surface_requires_wall_id",
+          "value": "(\"placements\".\"surface\" <> 'wall' and \"placements\".\"wall_id\" is null) or (\"placements\".\"surface\" = 'wall' and \"placements\".\"wall_id\" is not null)"
+        },
+        "placements_grout_non_negative": {
+          "name": "placements_grout_non_negative",
+          "value": "\"placements\".\"grout_width_mm\" is null or \"placements\".\"grout_width_mm\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.projects": {
+      "name": "projects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "project_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'draft'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "projects_owner_id_idx": {
+          "name": "projects_owner_id_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "projects_customer_id_idx": {
+          "name": "projects_customer_id_idx",
+          "columns": [
+            {
+              "expression": "customer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "projects_owner_id_users_id_fk": {
+          "name": "projects_owner_id_users_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "projects_customer_id_customers_id_fk": {
+          "name": "projects_customer_id_customers_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "projects_owner_all": {
+          "name": "projects_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "\"projects\".\"owner_id\" = (select auth.uid())",
+          "withCheck": "\"projects\".\"owner_id\" = (select auth.uid())"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.rooms": {
+      "name": "rooms",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ceiling_height_mm": {
+          "name": "ceiling_height_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 2500
+        },
+        "floor_material": {
+          "name": "floor_material",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ceiling_material": {
+          "name": "ceiling_material",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wall_material": {
+          "name": "wall_material",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "rooms_project_id_idx": {
+          "name": "rooms_project_id_idx",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "rooms_project_id_projects_id_fk": {
+          "name": "rooms_project_id_projects_id_fk",
+          "tableFrom": "rooms",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "rooms_owner_all": {
+          "name": "rooms_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "exists (select 1 from \"projects\" where \"projects\".\"id\" = \"rooms\".\"project_id\" and \"projects\".\"owner_id\" = (select auth.uid()))",
+          "withCheck": "exists (select 1 from \"projects\" where \"projects\".\"id\" = \"rooms\".\"project_id\" and \"projects\".\"owner_id\" = (select auth.uid()))"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.walls": {
+      "name": "walls",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "room_id": {
+          "name": "room_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_index": {
+          "name": "order_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "start_x_mm": {
+          "name": "start_x_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_y_mm": {
+          "name": "start_y_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_x_mm": {
+          "name": "end_x_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_y_mm": {
+          "name": "end_y_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height_mm": {
+          "name": "height_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thickness_mm": {
+          "name": "thickness_mm",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 115
+        },
+        "material": {
+          "name": "material",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "walls_room_id_idx": {
+          "name": "walls_room_id_idx",
+          "columns": [
+            {
+              "expression": "room_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "walls_room_id_rooms_id_fk": {
+          "name": "walls_room_id_rooms_id_fk",
+          "tableFrom": "walls",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "room_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "walls_owner_all": {
+          "name": "walls_owner_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "exists (select 1 from \"rooms\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"rooms\".\"id\" = \"walls\".\"room_id\" and \"projects\".\"owner_id\" = (select auth.uid()))",
+          "withCheck": "exists (select 1 from \"rooms\" join \"projects\" on \"projects\".\"id\" = \"rooms\".\"project_id\" where \"rooms\".\"id\" = \"walls\".\"room_id\" and \"projects\".\"owner_id\" = (select auth.uid()))"
+        }
+      },
+      "checkConstraints": {
+        "walls_thickness_positive": {
+          "name": "walls_thickness_positive",
+          "value": "\"walls\".\"thickness_mm\" > 0"
+        },
+        "walls_height_positive": {
+          "name": "walls_height_positive",
+          "value": "\"walls\".\"height_mm\" is null or \"walls\".\"height_mm\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.catalog_item_type": {
+      "name": "catalog_item_type",
+      "schema": "public",
+      "values": [
+        "tile",
+        "sanitary"
+      ]
+    },
+    "public.opening_type": {
+      "name": "opening_type",
+      "schema": "public",
+      "values": [
+        "door",
+        "window",
+        "niche"
+      ]
+    },
+    "public.price_unit": {
+      "name": "price_unit",
+      "schema": "public",
+      "values": [
+        "per_sqm",
+        "per_piece"
+      ]
+    },
+    "public.project_status": {
+      "name": "project_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "active",
+        "completed",
+        "archived"
+      ]
+    },
+    "public.surface_type": {
+      "name": "surface_type",
+      "schema": "public",
+      "values": [
+        "floor",
+        "ceiling",
+        "wall"
+      ]
+    },
+    "public.tile_pattern": {
+      "name": "tile_pattern",
+      "schema": "public",
+      "values": [
+        "grid",
+        "running_bond",
+        "herringbone"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
