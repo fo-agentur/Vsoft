@@ -61,26 +61,52 @@ Design und Assets sind vollständig eigenständig.
 
 ```
 src/
-  app/                    App Router (Seiten, Layout)
+  app/
+    page.tsx              Startseite (Modul-Übersicht)
+    demo/                 Editor-Demo ohne Anmeldung (In-Memory)
+    login/                Anmelden/Registrieren (Supabase Auth)
+    projekte/             Projekt- & Raumverwaltung (geschützt)
+      [projektId]/raum/[raumId]/   Raum-Editor (Aufmaß/2D)
+  components/editor/      RoomEditor (SVG-Canvas + Panel), RoomEditorScreen
   lib/
-    db/
-      schema.ts           Drizzle-Schema: alle Tabellen, Enums, RLS-Policies
-      index.ts            Server-seitiger DB-Client (lazy, gepoolt)
-    supabase/             Supabase-Clients (Browser/Server) + Env-Helper
+    editor/               Geometrie-Kern (mm, reine Funktionen), Vorlagen
+    data/rooms.ts         Laden/Speichern der Raumgeometrie (Diff-Upsert)
+    db/                   Drizzle-Schema (Migrationsquelle) + Server-Client
+    supabase/             Supabase-Clients (Browser/Server/Middleware)
     validation.ts         Zod-Schemas für JSONB-Strukturen
+  middleware.ts           Session-Refresh + Routen-Schutz für /projekte
 drizzle/                  Generierte SQL-Migrationen
 docs/
   datenmodell.md          Entitäten, Konventionen, RLS-Konzept
   ux-flow-referenz.md     Recherchierter Referenz-Ablauf + eigenes Screen-Konzept
 ```
 
+## Architektur-Notizen
+
+- **Laufzeit-Datenzugriff über `supabase-js`** (Browser & Server) mit
+  Row-Level-Security als Autorisierung – funktioniert ohne direkten
+  Postgres-Zugang. **Drizzle bleibt die Schema-/Migrationsquelle**
+  (`db:generate`/`db:migrate`); der Drizzle-Laufzeit-Client steht für
+  spätere Server-Jobs bereit, sobald `DATABASE_URL` gesetzt ist.
+- **Editor-Geometrie:** geschlossener Wandzug in Integer-Millimetern,
+  reine Funktionen in `src/lib/editor/geometry.ts`. Wandlängen-Änderungen
+  verschieben die Folge-Ecken und lassen die erste antiparallele Wand die
+  Differenz aufnehmen – rechtwinklige Räume bleiben rechtwinklig.
+- **Speichern:** Diff-basiertes Upsert/Delete mit stabilen Wand-IDs
+  (wichtig für spätere Fliesen-Placements auf Wänden).
+- **Auth:** E-Mail/Passwort. Supabase verlangt standardmäßig eine
+  E-Mail-Bestätigung; für schnelleres Testen kann man „Confirm email“ im
+  Supabase-Dashboard (Authentication → Sign In / Providers) deaktivieren.
+
 ## Roadmap
 
 - [x] **1. Projekt-Setup** – Next.js 15, Supabase, Drizzle, Tailwind
 - [x] **2. Datenmodell** – Project, Room, Wall, Opening, CatalogItem,
       Placement (+ Customer), RLS-Policies, initiale Migration
-- [ ] **3. 2D-Grundriss-Editor** – Wände zeichnen/verschieben, Türen/Fenster,
-      Live-Bemaßung
+- [x] **3. 2D-Grundriss-Editor** – Raumformen/Frei zeichnen, Wände schieben,
+      Ecken ziehen/einfügen, Türen/Fenster/Nischen, Live-Bemaßung mit
+      Direkteingabe, Zoom/Pan, Projekt-/Raum-Verwaltung mit Auth
+      (Demo ohne Anmeldung unter `/demo`)
 - [ ] **4. 3D-Ansicht** – Grundriss als Three.js-Szene, Orbit-Kamera,
       Material-Zuweisung
 - [ ] **5. Katalog-Verwaltung** – CRUD für Fliesen/Sanitär inkl. Uploads

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const moduleGroups = [
   {
     title: "Fundament",
@@ -22,7 +24,7 @@ const moduleGroups = [
         name: "Aufmaß & 2D-Editor",
         description:
           "Raumformen, Wände zeichnen, Türen/Fenster setzen, Live-Bemaßung",
-        status: "geplant" as const,
+        status: "fertig" as const,
       },
       {
         name: "3D-Ansicht",
@@ -95,6 +97,20 @@ export default function Home() {
           3D-Visualisierung bis zum fertigen Angebot – ein Werkzeug für
           Fliesenleger, das den kompletten Planungsablauf abdeckt.
         </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href="/projekte"
+            className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-85"
+          >
+            App öffnen
+          </Link>
+          <Link
+            href="/demo"
+            className="rounded-md border border-foreground/15 px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/5"
+          >
+            Editor-Demo (ohne Anmeldung)
+          </Link>
+        </div>
       </header>
 
       <main className="flex flex-col gap-10">

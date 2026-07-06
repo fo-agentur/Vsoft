@@ -1,12 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "@/types/database";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 
 /** Supabase-Client für Server Components, Server Actions und Route Handlers. */
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(supabaseUrl(), supabaseAnonKey(), {
+  return createServerClient<Database>(supabaseUrl(), supabaseAnonKey(), {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -18,7 +19,7 @@ export async function createClient() {
           );
         } catch {
           // In Server Components dürfen Cookies nicht gesetzt werden –
-          // das übernimmt später die Auth-Middleware.
+          // das übernimmt die Middleware (Session-Refresh).
         }
       },
     },
