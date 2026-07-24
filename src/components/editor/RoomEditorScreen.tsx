@@ -8,6 +8,14 @@ import type { RoomGeometry } from "@/lib/editor/types";
 import { saveRoomGeometry } from "@/lib/data/rooms";
 import { createClient } from "@/lib/supabase/client";
 import { RoomEditor } from "./RoomEditor";
+import dynamic from "next/dynamic";
+
+const Room3D = dynamic(() => import("./Room3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center text-sm opacity-50">3D-Ansicht wird geladen …</div>
+  ),
+});
 
 type Modus =
   | { art: "db"; roomId: string; zurueckHref: string }
@@ -39,6 +47,7 @@ export function RoomEditorScreen({
   const [geometry, setGeometry] = useState<RoomGeometry>(initialGeometry);
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<SaveStatus>({ s: "idle" });
+  const [ansicht, setAnsicht] = useState<"2d" | "3d">("2d");
 
   // Zuletzt gespeicherte IDs → Diff-Basis fürs nächste Speichern.
   const bekannteIds = useRef({
@@ -114,7 +123,32 @@ export function RoomEditorScreen({
           )}
         </div>
 
-        <span className="ml-auto rounded-full bg-foreground/5 px-2.5 py-1 text-xs font-medium tabular-nums">
+        <div className="ml-auto inline-flex overflow-hidden rounded-md border border-foreground/15 text-xs font-medium">
+          <button
+            type="button"
+            onClick={() => setAnsicht("2d")}
+            className={
+              ansicht === "2d"
+                ? "bg-foreground px-3 py-1.5 text-background"
+                : "px-3 py-1.5 hover:bg-foreground/5"
+            }
+          >
+            2D
+          </button>
+          <button
+            type="button"
+            onClick={() => setAnsicht("3d")}
+            className={
+              ansicht === "3d"
+                ? "bg-foreground px-3 py-1.5 text-background"
+                : "px-3 py-1.5 hover:bg-foreground/5"
+            }
+          >
+            3D
+          </button>
+        </div>
+
+        <span className="rounded-full bg-foreground/5 px-2.5 py-1 text-xs font-medium tabular-nums">
           {formatM2(areaM2)}
         </span>
 
@@ -155,15 +189,19 @@ export function RoomEditorScreen({
       </header>
 
       <div className="min-h-0 flex-1">
-        <RoomEditor
-          geometry={geometry}
-          onGeometryChange={onGeometryChange}
-          ceilingHeightMm={heightMm}
-          onCeilingHeightChange={(mm) => {
-            setHeightMm(mm);
-            setDirty(true);
-          }}
-        />
+        {ansicht === "2d" ? (
+          <RoomEditor
+            geometry={geometry}
+            onGeometryChange={onGeometryChange}
+            ceilingHeightMm={heightMm}
+            onCeilingHeightChange={(mm) => {
+              setHeightMm(mm);
+              setDirty(true);
+            }}
+          />
+        ) : (
+          <Room3D geometry={geometry} ceilingHeightMm={heightMm} />
+        )}
       </div>
     </div>
   );
